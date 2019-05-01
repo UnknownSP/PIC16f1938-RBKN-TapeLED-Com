@@ -7,7 +7,8 @@ static int send_data(uint8_t *data);
 
 void main(void) {
 
-  static uint8_t receive_data[8] = {};
+  static uint8_t receive_data[8] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
+  int count = 0;
   
   init();
   while(true){
@@ -22,26 +23,28 @@ void main(void) {
 
 static int send_data(uint8_t *data){
   static bool datachange_flag = false;
-  static int send_data_num = 0;
-  if(DATA_CLOCK == 0){
+  static uint8_t send_data_num = 0;
+  if(DATA_CLOCK == 0 && !datachange_flag){
     datachange_flag = true;
+    return 0;
   }
   if(DATA_CLOCK == 1 && datachange_flag){
-    send_data_num++;
     if(send_data_num >= 8) send_data_num = 0;
     DATA_SELECT_0 = send_data_num & 0x01;
-    DATA_SELECT_1 = send_data_num>>1 & 0x01;
-    DATA_SELECT_2 = send_data_num>>2 & 0x01;
+    DATA_SELECT_1 = send_data_num/2 & 0x01;
+    DATA_SELECT_2 = send_data_num/4 & 0x01;
     DATA_OUT_0 = data[send_data_num] & 0x01;
-    DATA_OUT_1 = data[send_data_num]>>1 & 0x01;
-    DATA_OUT_2 = data[send_data_num]>>2 & 0x01;
-    DATA_OUT_3 = data[send_data_num]>>3 & 0x01;
-    DATA_OUT_4 = data[send_data_num]>>4 & 0x01;
-    DATA_OUT_5 = data[send_data_num]>>5 & 0x01;
-    DATA_OUT_6 = data[send_data_num]>>6 & 0x01;
-    DATA_OUT_7 = data[send_data_num]>>7 & 0x01;
+    DATA_OUT_1 = data[send_data_num]/2 & 0x01;
+    DATA_OUT_2 = data[send_data_num]/4 & 0x01;
+    DATA_OUT_3 = data[send_data_num]/8 & 0x01;
+    DATA_OUT_4 = data[send_data_num]/16 & 0x01;
+    DATA_OUT_5 = data[send_data_num]/32 & 0x01;
+    DATA_OUT_6 = data[send_data_num]/64 & 0x01;
+    DATA_OUT_7 = data[send_data_num]/128 & 0x01;
+    send_data_num++;
     datachange_flag = false;
   }
+  return 0;
 }
 
 void init(void){
