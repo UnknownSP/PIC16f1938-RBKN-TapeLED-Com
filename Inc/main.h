@@ -1,10 +1,3 @@
-/*
- * File:   LEDBlink.h
- * Author: seimi
- *
- * Created on 2016/02/13, 13:38
- */
-
 #ifndef MAIN_H
 #define	MAIN_H
 
@@ -18,7 +11,7 @@ extern "C" {
 
 // CONFIG1
 #pragma config FOSC = INTOSC    // Oscillator Selection (INTOSC oscillator: I/O function on CLKIN pin)
-#pragma config WDTE = ON       // Watchdog Timer Enable (WDT enabled)
+#pragma config WDTE = OFF       // Watchdog Timer Enable (WDT enabled)
 #pragma config PWRTE = ON       // Power-up Timer Enable (PWRT enabled)
 #pragma config MCLRE = ON       // MCLR Pin Function Select (MCLR/VPP pin function is MCLR)
 #pragma config CP = OFF         // Flash Program Memory Code Protection (Program memory code protection is disabled)
@@ -38,8 +31,20 @@ extern "C" {
 
 #include <pic16f1938.h>
 #include "I2C.h"
-#include "ECCP.h"
 
+#define DATA_OUT_0    RB5
+#define DATA_OUT_1    RB4
+#define DATA_OUT_2    RB3
+#define DATA_OUT_3    RB2
+#define DATA_OUT_4    RB1
+#define DATA_OUT_5    RB0
+#define DATA_OUT_6    RC7
+#define DATA_OUT_7    RC6
+#define DATA_SELECT_0 RC0
+#define DATA_SELECT_1 RC1
+#define DATA_SELECT_2 RC2
+#define DATA_CLOCK    RC5
+  
 #ifdef	__cplusplus
 }
 #endif

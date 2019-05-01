@@ -3,35 +3,49 @@
 #include <stdbool.h>
 
 void init(void);
-void SendToMotor(uint16_t speed,uint8_t stat);
+static int send_data(uint8_t *data);
 
 void main(void) {
-    uint16_t speed;
-    uint8_t mode;
-    uint8_t com_flg = 0;
 
-    init();
-
-    mode=0;
-
-    while(true){
-
-        if(I2C_ReceiveCheck()){
-            if (com_flg == 0) com_flg = 1;
-            speed = (rcv_data[0]&0x03)<<8;//STM仕様に変更
-            speed |= rcv_data[1];
-            mode = (rcv_data[0] >> 2) & 0x03;
-            CLRWDT();
-        }
-        else if (com_flg == 0){
-            CLRWDT();
-        }
-        PWMSet(speed,mode);
+  static uint8_t receive_data[8] = {};
+  
+  init();
+  while(true){
+    if(I2C_ReceiveCheck()){
+      for(int i=0;i<8;i++){
+	receive_data[i] = rcv_data[i];
+      }
     }
+    send_data(receive_data);
+  }
+}
+
+static int send_data(uint8_t *data){
+  static bool datachange_flag = false;
+  static int send_data_num = 0;
+  if(DATA_CLOCK == 0){
+    datachange_flag = true;
+  }
+  if(DATA_CLOCK == 1 && datachange_flag){
+    send_data_num++;
+    if(send_data_num >= 8) send_data_num = 0;
+    DATA_SELECT_0 = send_data_num & 0x01;
+    DATA_SELECT_1 = send_data_num>>1 & 0x01;
+    DATA_SELECT_2 = send_data_num>>2 & 0x01;
+    DATA_OUT_0 = data[send_data_num] & 0x01;
+    DATA_OUT_1 = data[send_data_num]>>1 & 0x01;
+    DATA_OUT_2 = data[send_data_num]>>2 & 0x01;
+    DATA_OUT_3 = data[send_data_num]>>3 & 0x01;
+    DATA_OUT_4 = data[send_data_num]>>4 & 0x01;
+    DATA_OUT_5 = data[send_data_num]>>5 & 0x01;
+    DATA_OUT_6 = data[send_data_num]>>6 & 0x01;
+    DATA_OUT_7 = data[send_data_num]>>7 & 0x01;
+    datachange_flag = false;
+  }
 }
 
 void init(void){
-  uint8_t addr = 0x10;
+  uint8_t addr = 0x70;
 
   // Set oscilation
   OSCCON = 0xF0; //PLL　Enable
@@ -39,19 +53,13 @@ void init(void){
   // Set pin mode
   ANSELA = 0x00;
   ANSELB = 0x00;
+  TRISA  = 0b00000000;
+  TRISB  = 0b00000000;
+  TRISC  = 0b00100000;
   
-  // Set watch dog
-  WDTCON = 0x13;
-
-  addr |= (PORTAbits.RA0 << 0);
-  addr |= (PORTAbits.RA1 << 1);
-  addr |= (PORTAbits.RA2 << 2);
-  addr |= (PORTAbits.RA5 << 3);
-
   I2C_init(addr);//アドレス
-  PWMInit();
 }
 
 void interrupt  HAND(void){
-    Slave_Interrupt();
+  Slave_Interrupt();
 }

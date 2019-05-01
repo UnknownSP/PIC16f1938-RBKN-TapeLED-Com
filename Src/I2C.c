@@ -1,16 +1,7 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//木更津高専ロボット研究同好会
-//I2C通信用関数
-//Use device microchip PIC16F1938
-//MPLAB X IDE(ver.2.30)
-//HI-TECH C Compiler for PIC10/12/16 MCUs Version 9.80 in Lite mode
-//Last updata 2015/5/13/
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include<htc.h>
 #include"I2C.h"
 uint8_t rcv_data[RCV_DATA_LEN]; // 受信データバッファ
 uint8_t snd_data[SND_DATA_LEN]; // 送信データバッファ
-
 
 int8_t rcv_flg; // データ受信回数を保存するフラグ
 uint8_t *Sdtp; // ���M�f�[�^�o�b�t�@�̃A�h���X�|�C���^�[
@@ -36,12 +27,12 @@ void I2C_init(uint8_t add)
     SSPSTAT = 0x80;
     SSPCON1 = 0x28;
     SSPADD = speed;
-    SSPIE = 1; // SSP(I2C)���荞�݂�������
-    BCLIE = 1; // MSSP(I2C)�o�X�Փˊ��荞�݂�������
-    PEIE = 1; // ���ӑ��u���荞�݂�������
-    GIE = 1; // �S���荞�ݏ�����������
-    SSPIF = 0; // SSP(I2C)���荞�݃t���O���N���A����
-    BCLIF = 0; // MSSP(I2C)�o�X�Փˊ��荞�݃t���O���N���A����
+    SSPIE = 1; 
+    BCLIE = 1; 
+    PEIE = 1; 
+    GIE = 1; 
+    SSPIF = 0;
+    BCLIF = 0; 
     pinModeSCK = 1;
     pinModeSDA = 1;
 
@@ -52,11 +43,11 @@ void I2C_init(uint8_t add)
     SEN = 1;
     SSPADD = add << 1;
     SSPMSK = 0xfe;
-    SSPIE = 1; // SSP(I2C)���荞�݂�������
-    BCLIE = 1; // MSSP(I2C)�o�X�Փˊ��荞�݂�������
-    PEIE = 1; // ���ӑ��u���荞�݂�������
-    GIE = 1; // �S���荞�ݏ�����������
-    SSPIF = 0; // SSP(I2C)���荞�݃t���O���N���A����
+    SSPIE = 1; 
+    BCLIE = 1; 
+    PEIE = 1; 
+    GIE = 1; 
+    SSPIF = 0;
     BCLIF = 0;
     pinModeSCK = 1;
     pinModeSDA = 1;
@@ -241,7 +232,7 @@ uint8_t I2C_ReceiveCheck() {
 
     ans = 0;
     if (rcv_flg != 0) { // 受信したデータがあったら
-        if ((SSPSTATbits.S == 0)&&(SSPSTATbits.P == 1)) { // �į�ߺ��ި��ݔ��s���ꂽ����
+        if ((SSPSTATbits.S == 0)&&(SSPSTATbits.P == 1)) { 
             ans = rcv_flg;
             rcv_flg = 0;
         }
