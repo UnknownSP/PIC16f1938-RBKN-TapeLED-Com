@@ -7,7 +7,7 @@ static int send_data(uint8_t *data);
 
 void main(void) {
 
-  static uint8_t receive_data[8] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
+  static uint8_t receive_data[8] = {};
   int count = 0;
   
   init();
