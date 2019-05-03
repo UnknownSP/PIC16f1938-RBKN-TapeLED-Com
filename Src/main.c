@@ -4,17 +4,28 @@
 
 void init(void);
 static int send_data(uint8_t *data);
+static uint8_t send_data_num = 0;
+static bool datachange_flag = false;
 
 void main(void) {
 
   static uint8_t receive_data[8] = {};
-  int count = 0;
+  static int change_flag = false;
+  static int count = 0;
   
   init();
   while(true){
     if(I2C_ReceiveCheck()){
       for(int i=0;i<8;i++){
+	if(rcv_data[i] != receive_data[i]){
+	  change_flag = true;
+	}
 	receive_data[i] = rcv_data[i];
+      }
+      if(change_flag){
+	send_data_num = 0;
+	datachange_flag = false;
+	change_flag = false;
       }
     }
     send_data(receive_data);
@@ -22,8 +33,6 @@ void main(void) {
 }
 
 static int send_data(uint8_t *data){
-  static bool datachange_flag = false;
-  static uint8_t send_data_num = 0;
   if(DATA_CLOCK == 0 && !datachange_flag){
     datachange_flag = true;
     return 0;
